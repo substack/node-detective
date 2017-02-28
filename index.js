@@ -6,7 +6,9 @@ var requireRe = /\brequire\b/;
 
 function parse (src, opts) {
     if (!opts) opts = {};
-    return acorn.parse(src, {
+    opts.acorn = defined(opts.acorn, {});
+    acorn = defined(opts.acorn.parser, acorn);
+    opts = Object.assign({}, {
         ecmaVersion: defined(opts.ecmaVersion, 6),
         sourceType: opts.sourceType,
         ranges: defined(opts.ranges, opts.range),
@@ -15,8 +17,9 @@ function parse (src, opts) {
         allowReturnOutsideFunction: defined(
             opts.allowReturnOutsideFunction, true
         ),
-        allowHashBang: defined(opts.allowHashBang, true)
-    });
+        allowHashBang: defined(opts.allowHashBang, true),
+    }, opts.acorn.opts);
+    return acorn.parse(src, opts);
 }
 
 var exports = module.exports = function (src, opts) {
